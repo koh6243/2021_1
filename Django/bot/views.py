@@ -7,21 +7,21 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
-line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
+line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN) #從settings.py得到api
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
 import requests
 
-host='http://api.thingspeak.com'
-read_api_key='7VF0KX0CJLUUFB8M'
-channel_id='1068886'
+host='http://api.thingspeak.com'   #設定thingspeak網址
+read_api_key='7VF0KX0CJLUUFB8M'    #填入api
+channel_id='1068886'               #填入id
 
 url='%s/channels/%s/feeds/last.json?api_key=%s' \
-     %(host, channel_id, read_api_key)
-field1=''
-field2=''
-field3=''
-field4=''
+     %(host, channel_id, read_api_key) #將上面三個變數組合起來成一個網址
+field1=''   #冰箱溫度
+field2=''   #冰箱濕度
+field3=''   #環境溫度
+field4=''   #環境濕度
 @csrf_exempt
 def callback(request):
  
@@ -37,18 +37,17 @@ def callback(request):
             return HttpResponseBadRequest()
  
         for event in events:
-            if event.message.text=="冰箱溫度"or"冰箱濕度"or"環境溫度"or"環境濕度"or"冰箱溫溼度"or"環境溫溼度"or"全部溫度"or"全部濕度"or"全部":              
+            if event.message.text=="冰箱溫度"or"冰箱濕度"or"環境溫度"or"環境濕度"or"冰箱溫溼度"or"環境溫溼度"or"全部溫度"or"全部濕度"or"全部":               #當偵測到特定的關鍵字
                 try:
                     r=requests.get(url)                   
                 except:
                     print('requests.get() exception occurred!')
                 answer=r.json()
-                if answer['field1']!=None:
-                    field1=answer['field1']
-                    field1=answer['field1']
+                if answer['field1']!=None:          #由於環境跟冰箱兩台上傳時間不同，所以可能最新一筆是環境或冰箱的，確認冰箱資料不是空值
+                    field1=answer['field1']         #將資料抓進變數
                     field2=answer['field2']
-                    entry=answer['entry_id']-1
-                    url_1='https://api.thingspeak.com/channels/1068886l/feeds/'+str(entry)+'.json?key=7VF0KX0CJLUUFB8M'
+                    entry=answer['entry_id']-1      #抓取資料從最新一筆往前一筆
+                    url_1='https://api.thingspeak.com/channels/1068886l/feeds/'+str(entry)+'.json?key=7VF0KX0CJLUUFB8M' #從抓最新資料修改為抓特定一筆id
                     try:
                         r = requests.get(url_1)
                     except:   
@@ -56,7 +55,7 @@ def callback(request):
                     answer=r.json()
                     field3=answer['field3']
                     field4=answer['field4']
-                elif answer['field3']!=None:
+                elif answer['field3']!=None:       #同上，確認環境不是空值
                     field3=answer['field3']
                     field4=answer['field4']
                     entry=answer['entry_id']-1
@@ -68,10 +67,10 @@ def callback(request):
                     answer=r.json()
                     field1=answer['field1']
                     field2=answer['field2']
-                if event.message.text=="冰箱溫度":
+                if event.message.text=="冰箱溫度":        #偵測到關鍵字
                     line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text="目前冰箱溫度:"+field1+"°C")
+                    TextSendMessage(text="目前冰箱溫度:"+field1+"°C")  #回傳給使用者訊息
                     )
                 if event.message.text=="冰箱濕度":
                     line_bot_api.reply_message(
