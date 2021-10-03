@@ -1,0 +1,20 @@
+架設環境
+pip install django
+pip install line-bot-sdk
+pip install beautifulsoup4
+pip install requests
+
+登入網站
+https://ngrok.com/
+
+開啟ngrok.exe並輸入指令
+ngrok http 8000
+
+mylinebot\settings.py 更改ALLOWED_HOSTS = ['???.ngrok.io'] 
+網頁也要設定允許
+
+python的 CMD輸入
+python manage.py runserver
+
+關鍵字觸發指令
+mylinebot\bot\views.py
