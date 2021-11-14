@@ -1,0 +1,2 @@
+D:\c#\output\Thingspeak2.pdb
+D:\c#\output\Thingspeak2.exe

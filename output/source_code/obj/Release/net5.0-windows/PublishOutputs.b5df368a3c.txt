@@ -1,0 +1,6 @@
+D:\c#\Thingspeak2.exe
+D:\c#\Thingspeak2.dll
+D:\c#\Thingspeak2.deps.json
+D:\c#\Thingspeak2.runtimeconfig.json
+D:\c#\Thingspeak2.pdb
+D:\c#\Newtonsoft.Json.dll
